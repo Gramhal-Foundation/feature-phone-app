@@ -12,5 +12,8 @@
 			<p class="text-sm">Select “Agree” to accept the Terms of Service and continue</p>
 		</div>
 	</section>
-	<SoftwareKeys />
+	<SoftwareKeys>
+		<p class="truncate text-left" slot="left">Read more</p>
+		<p class="truncate text-right" slot="right">Agree</p>
+	</SoftwareKeys>
 </main>
