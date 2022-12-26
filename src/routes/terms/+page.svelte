@@ -1,5 +1,21 @@
-<script>
+<script lang="ts">
 	import SoftwareKeys from '$lib/components/SoftwareKeys.svelte';
+	import { goto } from '$app/navigation';
+
+	const handleKeyDown = (evt: KeyboardEvent) => {
+		switch (evt.key) {
+			case 'SoftLeft':
+				// TODO: Open terms in browser
+				return;
+			case 'Enter':
+				return;
+			case 'ArrowRight':
+			case 'SoftRight':
+				return goto('/otp');
+			default:
+				return;
+		}
+	};
 </script>
 
 <main class="grid h-screen w-screen grid-rows-2">
@@ -17,3 +33,5 @@
 		<p class="truncate text-right" slot="right">Agree</p>
 	</SoftwareKeys>
 </main>
+
+<svelte:window on:keydown={handleKeyDown} />
