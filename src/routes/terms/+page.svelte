@@ -20,7 +20,7 @@
 
 <main class="grid h-screen w-screen grid-rows-2">
 	<section class="flex h-full w-full items-center justify-center bg-white">
-		<img class="h-20 w-20" src="\Uttrr_56.svg" alt="uttrr" />
+		<img class="h-20 w-20" src="/uttrr_with_name.svg" alt="uttrr" />
 	</section>
 	<section class="flex h-full w-full justify-center bg-primary text-center text-white">
 		<div class="m-4 space-y-2">
