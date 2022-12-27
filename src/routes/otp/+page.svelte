@@ -1,13 +1,89 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import SoftwareKeys from '$lib/components/SoftwareKeys.svelte';
+	import toast, { Toaster } from 'svelte-french-toast';
 
-	const handleKeyDown = (evt: KeyboardEvent) => {
+	let phone = '';
+	let inputDisabled = false;
+	let loading = false;
+
+	const verifyOTP = async (phone: string) => {
+		// TODO: Make an API call to send OTP to the phone number
+		const otpPromise: Promise<string> = new Promise(async (resolve, reject) => {
+			try {
+				// @ts-ignore
+				const activity = new MozActivity({
+					name: 'get-otp',
+					data: {
+						pattern: /([0-9]{4,8}) OTP/g,
+						timeout: 120000
+					}
+				});
+
+				await fetch('https://listag.net/api/v1/utter/login?action=get_otp&mobile_number=' + phone, {
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
+
+				activity.onsuccess = function (evt: { target: { result: { code: string[] } } }) {
+					resolve(evt.target.result.code[0]);
+				};
+
+				activity.onerror = function () {
+					reject(this.error);
+				};
+			} catch (error) {
+				reject(error);
+			}
+		});
+
+		try {
+			const otpString = await otpPromise;
+			const otp = otpString.split(' ')[0];
+
+			await fetch(
+				`https://listag.net/api/v1/utter/login?action=submit_otp&mobile_number=${phone}&otp=${otp}`,
+				{
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				}
+			);
+			return Promise.resolve();
+		} catch (error) {
+			return Promise.reject(error);
+		}
+	};
+
+	const handleKeyDown = async (evt: KeyboardEvent) => {
 		switch (evt.key) {
 			case 'ArrowRight':
 			case 'SoftRight':
-				// TODO: Make an API call to send OTP
-				return goto('/otp/verify');
+				if (!loading) {
+					// Check if the string is a valid phone number or not
+					if (phone.length !== 10 || isNaN(Number(phone))) {
+						toast.error('Please enter a valid phone number');
+						return;
+					}
+					inputDisabled = true;
+					loading = true;
+					try {
+						await toast.promise(verifyOTP(phone), {
+							loading: 'Verifying OTP...',
+							success: 'OTP verified!',
+							error: 'OTP verification failed'
+						});
+						goto('/home');
+					} catch (error) {
+						console.error(error);
+					}
+					inputDisabled = false;
+					loading = false;
+				}
+				return;
 			default:
 				return;
 		}
@@ -25,8 +101,10 @@
 				type="text"
 				name="phone"
 				id="phone"
-				class="border-gray-300 block w-full rounded-md shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+				class="border-gray-300 block w-full rounded-md shadow-sm focus:border-primary focus:ring-primary disabled:opacity-50 sm:text-sm"
 				placeholder="1234567890"
+				bind:value={phone}
+				disabled={inputDisabled}
 			/>
 		</div>
 	</section>
@@ -37,4 +115,5 @@
 	</SoftwareKeys>
 </main>
 
+<Toaster />
 <svelte:window on:keydown={handleKeyDown} />
