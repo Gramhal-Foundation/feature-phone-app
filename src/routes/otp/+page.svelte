@@ -110,7 +110,9 @@
 	</section>
 	<SoftwareKeys>
 		<div slot="right" class="flex justify-end text-white">
-			<img class="h-4 w-4" src="/tick.svg" alt="ok" />
+			{#if !loading}
+				<img class="h-4 w-4" src="/tick.svg" alt="ok" />
+			{/if}
 		</div>
 	</SoftwareKeys>
 </main>
