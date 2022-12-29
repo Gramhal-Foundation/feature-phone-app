@@ -14,7 +14,7 @@
 	data-message-id={messageId}
 >
 	<aside class="m-2 rounded bg-white">
-		<img {src} alt="icon" class="object-cover" />
+		<img {src} alt="icon" class="h-[42.6px] w-[42.6px] object-cover" />
 	</aside>
 	<div class="flex flex-col justify-center">
 		<!-- svelte-ignore a11y-distracting-elements -->
