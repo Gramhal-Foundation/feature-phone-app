@@ -9,6 +9,7 @@
 	let time = 60;
 	let loading = false;
 	let mediaRecorder: MediaRecorder | undefined;
+	let cancelled = false;
 
 	onMount(() => {
 		if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -46,6 +47,7 @@
 							time = 60;
 							clearInterval(interval);
 							recording = false;
+							if (cancelled) return;
 							const audioBlob = new Blob(audioChunks);
 							const id = crypto.randomUUID();
 							let db: IDBDatabase;
@@ -110,6 +112,12 @@
 					}
 				}
 				return;
+			case 'ArrowLeft':
+			case 'SoftLeft':
+				cancelled = true;
+				mediaRecorder?.stop();
+				goto(`/home`);
+				return;
 			default:
 				return;
 		}
@@ -128,6 +136,11 @@
 		{/if}
 	</section>
 	<SoftwareKeys>
+		<div slot="left" class="flex items-center justify-start">
+			{#if recording}
+				<img class="h-4 w-4" src="/cancel.svg" alt="back" />
+			{/if}
+		</div>
 		<div slot="center" class="flex items-center justify-center">
 			{#if recording}
 				<img class="h-4 w-4" src="/tick.svg" alt="finish" />
