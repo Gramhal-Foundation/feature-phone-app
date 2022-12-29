@@ -1,5 +1,22 @@
-<script>
+<script lang="ts">
 	import ContactComponent from '$lib/components/ContactComponent.svelte';
+	import Navigation from '$lib/utils/navigation';
+	import { onMount } from 'svelte';
+
+	onMount(() => {
+		Navigation.selectFirstElement();
+	});
+
+	const handleKeyDown = (event: KeyboardEvent) => {
+		switch (event.key) {
+			case 'ArrowDown':
+				return Navigation.Down();
+			case 'ArrowUp':
+				return Navigation.Up();
+			default:
+				return;
+		}
+	};
 </script>
 
 <main>
@@ -42,3 +59,5 @@
 		</li>
 	</ul>
 </main>
+
+<svelte:window on:keydown={handleKeyDown} />
