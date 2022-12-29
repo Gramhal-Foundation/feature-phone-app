@@ -1,26 +1,113 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 
 	import SoftwareKeys from '$lib/components/SoftwareKeys.svelte';
+	import { goto } from '$app/navigation';
 
 	let recording = false;
 	let time = 60;
+	let loading = false;
+	let mediaRecorder: MediaRecorder | undefined;
+
+	onMount(() => {
+		if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+			loading = true;
+			navigator.mediaDevices
+				.getUserMedia(
+					// constraints - only audio needed for this app
+					{
+						audio: true
+					}
+				)
+				// Success callback
+				.then((stream) => {
+					mediaRecorder = new MediaRecorder(stream);
+				})
+				.finally(() => {
+					loading = false;
+				});
+		}
+	});
 
 	const handleKeyDown = (event: KeyboardEvent) => {
 		switch (event.key) {
 			case 'Enter':
-				recording = !recording;
-				if (recording) {
-					const interval = setInterval(() => {
-						time--;
-						if (time === 0) {
+				if (mediaRecorder) {
+					recording = !recording;
+					if (recording) {
+						const audioChunks: BlobPart[] | undefined = [];
+
+						mediaRecorder.addEventListener('dataavailable', (event) => {
+							audioChunks.push(event.data);
+						});
+
+						mediaRecorder.addEventListener('stop', () => {
+							time = 60;
 							clearInterval(interval);
 							recording = false;
-							time = 60;
-						}
-					}, 1000);
-				} else {
-					time = 60;
+							const audioBlob = new Blob(audioChunks);
+							const id = crypto.randomUUID();
+							let db: IDBDatabase;
+							const request = indexedDB.open('uttrr', 1);
+							request.onerror = (event) => {
+								console.error("Why didn't you allow my web app to use IndexedDB?!");
+							};
+							request.onsuccess = (event: any) => {
+								db = event.target.result;
+								// Save the audio blob to IndexedDB
+								const transaction = db.transaction(['messages'], 'readwrite');
+								const messagesObjectStore = transaction.objectStore('messages');
+								messagesObjectStore.clear();
+								const request = messagesObjectStore.add({
+									id,
+									phone: $page.params.phone,
+									audio: audioBlob
+								});
+								request.onsuccess = () => {
+									console.log('Audio saved to IndexedDB');
+									goto(`/messages/${$page.params.phone}/view/local/${id}`);
+								};
+							};
+							request.onupgradeneeded = (event: any) => {
+								db = event.target.result;
+								let objectStore = db.createObjectStore('messages', { keyPath: 'id' });
+								objectStore.createIndex('phone', 'phone', { unique: false });
+								objectStore.createIndex('audio', 'audio', { unique: false });
+								objectStore.transaction.oncomplete = (event) => {
+									// Save the audio blob to IndexedDB
+									const messagesObjectStore = db
+										.transaction('messages', 'readwrite')
+										.objectStore('messages');
+									messagesObjectStore.clear();
+									const request = messagesObjectStore.add({
+										id,
+										phone: $page.params.phone,
+										audio: audioBlob
+									});
+
+									request.onsuccess = () => {
+										console.log('Audio saved to IndexedDB');
+										goto(`/messages/${$page.params.phone}/view/local/${id}`);
+									};
+								};
+							};
+						});
+
+						mediaRecorder.start();
+
+						const interval = setInterval(() => {
+							time--;
+							if (time === 0) {
+								mediaRecorder?.stop();
+								clearInterval(interval);
+								recording = false;
+								time = 60;
+							}
+						}, 1000);
+					} else {
+						mediaRecorder.stop();
+					}
 				}
 				return;
 			default:
