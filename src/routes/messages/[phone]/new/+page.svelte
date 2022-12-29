@@ -124,31 +124,33 @@
 	};
 </script>
 
-<main class="flex h-screen flex-col bg-primary pb-7">
-	<section class="flex flex-col items-center space-y-4 py-4 px-4">
-		<div class="flex flex-col items-center">
-			<img src="/uttrr.svg" alt="logo" class="h-16 w-16" />
-			<h1 class="text-center text-lg font-semibold text-white">{$page.params.phone}</h1>
-		</div>
-		{#if recording}
-			<img src="/mic.svg" alt="mic" class="h-12 w-12 animate-pulse" />
-			<span class="text-center text-white">{time}</span>
-		{/if}
-	</section>
-	<SoftwareKeys>
-		<div slot="left" class="flex items-center justify-start">
+{#if !loading}
+	<main class="flex h-screen flex-col bg-primary pb-7">
+		<section class="flex flex-col items-center space-y-4 py-4 px-4">
+			<div class="flex flex-col items-center">
+				<img src="/uttrr.svg" alt="logo" class="h-16 w-16" />
+				<h1 class="text-center text-lg font-semibold text-white">{$page.params.phone}</h1>
+			</div>
 			{#if recording}
-				<img class="h-4 w-4" src="/cancel.svg" alt="back" />
+				<img src="/mic.svg" alt="mic" class="h-12 w-12 animate-pulse" />
+				<span class="text-center text-white">{time}</span>
 			{/if}
-		</div>
-		<div slot="center" class="flex items-center justify-center">
-			{#if recording}
-				<img class="h-4 w-4" src="/tick.svg" alt="finish" />
-			{:else}
-				<img class="h-4 w-4" src="/mic.svg" alt="record" />
-			{/if}
-		</div>
-	</SoftwareKeys>
-</main>
+		</section>
+		<SoftwareKeys>
+			<div slot="left" class="flex items-center justify-start">
+				{#if recording}
+					<img class="h-4 w-4" src="/cancel.svg" alt="back" />
+				{/if}
+			</div>
+			<div slot="center" class="flex items-center justify-center">
+				{#if recording}
+					<img class="h-4 w-4" src="/tick.svg" alt="finish" />
+				{:else}
+					<img class="h-4 w-4" src="/mic.svg" alt="record" />
+				{/if}
+			</div>
+		</SoftwareKeys>
+	</main>
+{/if}
 
 <svelte:window on:keydown={handleKeyDown} />
