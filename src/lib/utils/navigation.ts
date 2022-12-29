@@ -34,4 +34,6 @@ const Up = () => {
 	selectElement(allElements[setIndex] || allElements[0]);
 };
 
-export default { Down, Up, selectElement, selectFirstElement };
+const getSelectedElement = () => document.querySelector('[data-nav-selected=true]');
+
+export default { Down, Up, selectElement, selectFirstElement, getSelectedElement };

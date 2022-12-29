@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import ContactComponent from '$lib/components/ContactComponent.svelte';
 	import Navigation from '$lib/utils/navigation';
 	import { onMount } from 'svelte';
@@ -7,8 +8,26 @@
 		Navigation.selectFirstElement();
 	});
 
+	const handleSelectingContact = () => {
+		const element = Navigation.getSelectedElement();
+		if (element) {
+			const phone = element.getAttribute('data-phone');
+			const count = element.getAttribute('data-count');
+			const messageId = element.getAttribute('data-message-id');
+			if (count && Number(count) > 0) {
+				goto(`/messages/${phone}/${messageId}`);
+			} else {
+				goto(`/messages/${phone}`);
+			}
+		}
+	};
+
 	const handleKeyDown = (event: KeyboardEvent) => {
 		switch (event.key) {
+			case 'Enter':
+				// Handle selecting a contact
+				handleSelectingContact();
+				return;
 			case 'ArrowDown':
 				return Navigation.Down();
 			case 'ArrowUp':
@@ -26,7 +45,8 @@
 				src="/uttrr.svg"
 				phone="1234567890"
 				datetime="2021-01-01 12:00 AM"
-				count={1}
+				count={0}
+				messageId="123"
 			/>
 		</li>
 	</ul>
@@ -41,6 +61,7 @@
 				phone="1234567890"
 				datetime="2021-01-01 12:00 AM"
 				count={1}
+				messageId="123"
 			/>
 		</li>
 	</ul>
@@ -55,6 +76,7 @@
 				phone="1234567890"
 				datetime="2021-01-01 12:00 AM"
 				count={1}
+				messageId="123"
 			/>
 		</li>
 	</ul>

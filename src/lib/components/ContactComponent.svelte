@@ -3,11 +3,15 @@
 	export let phone: string;
 	export let datetime: string;
 	export let count: number | undefined;
+	export let messageId: string | null;
 </script>
 
 <section
 	class="group flex items-center space-x-2 data-[nav-selected=true]:bg-primary data-[nav-selected=true]:text-white"
 	data-nav-selectable="true"
+	data-phone={phone}
+	data-count={count}
+	data-message-id={messageId}
 >
 	<aside class="m-2 rounded bg-white">
 		<img {src} alt="icon" class="object-cover" />
@@ -18,7 +22,7 @@
 		<p class="truncate text-sm">{datetime}</p>
 	</div>
 	<aside class="flex items-center justify-end pr-2">
-		{#if count}
+		{#if count && count > 0}
 			<span
 				class="h-5 w-5 rounded-full bg-primary text-center text-sm font-semibold text-white group-data-[nav-selected=true]:bg-white group-data-[nav-selected=true]:text-primary"
 				>{count}</span
