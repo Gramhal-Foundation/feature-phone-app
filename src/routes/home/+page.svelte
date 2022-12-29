@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import ContactComponent from '$lib/components/ContactComponent.svelte';
 	import Navigation from '$lib/utils/navigation';
 	import { onMount } from 'svelte';
+
+	import ContactComponent from '$lib/components/ContactComponent.svelte';
+	import SoftwareKeys from '$lib/components/SoftwareKeys.svelte';
 
 	onMount(() => {
 		Navigation.selectFirstElement();
@@ -15,9 +17,9 @@
 			const count = element.getAttribute('data-count');
 			const messageId = element.getAttribute('data-message-id');
 			if (count && Number(count) > 0) {
-				goto(`/messages/${phone}/${messageId}`);
+				goto(`/messages/${phone}/view/${messageId}`);
 			} else {
-				goto(`/messages/${phone}`);
+				goto(`/messages/${phone}/new`);
 			}
 		}
 	};
@@ -38,7 +40,7 @@
 	};
 </script>
 
-<main>
+<main class="pb-7">
 	<ul>
 		<li>
 			<ContactComponent
@@ -46,7 +48,7 @@
 				phone="1234567890"
 				datetime="2021-01-01 12:00 AM"
 				count={0}
-				messageId="123"
+				messageId={null}
 			/>
 		</li>
 	</ul>
@@ -80,6 +82,11 @@
 			/>
 		</li>
 	</ul>
+	<SoftwareKeys>
+		<div slot="center" class="flex justify-center">
+			<img class="h-4 w-4" src="/tick.svg" alt="ok" />
+		</div>
+	</SoftwareKeys>
 </main>
 
 <svelte:window on:keydown={handleKeyDown} />
