@@ -42,17 +42,22 @@
 		try {
 			const otpString = await otpPromise;
 			const otp = otpString.split(' ')[0];
-
-			await fetch(
-				`https://listag.net/api/v1/utter/login?action=submit_otp&mobile_number=${phone}&otp=${otp}`,
-				{
-					method: 'GET',
-					headers: {
-						'Content-Type': 'application/json'
+			try {
+				const response = await fetch(
+					`https://listag.net/api/v1/utter/login?action=submit_otp&mobile_number=${phone}&otp=${otp}`,
+					{
+						method: 'GET',
+						headers: {
+							'Content-Type': 'application/json'
+						}
 					}
-				}
-			);
-			return Promise.resolve();
+				);
+				const data = await response.json();
+				localStorage.setItem('authTokens', JSON.stringify(data));
+				return Promise.resolve();
+			} catch (error) {
+				return Promise.reject(error);
+			}
 		} catch (error) {
 			return Promise.reject(error);
 		}

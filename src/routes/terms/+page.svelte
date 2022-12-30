@@ -11,6 +11,7 @@
 				return;
 			case 'ArrowRight':
 			case 'SoftRight':
+				localStorage.setItem('termsAccepted', 'true');
 				return goto('/otp');
 			default:
 				return;
