@@ -3,7 +3,6 @@
 	export let phone: string;
 	export let datetime: string;
 	export let count: number | undefined;
-	export let messageId: string | null;
 </script>
 
 <section
@@ -11,7 +10,6 @@
 	data-nav-selectable="true"
 	data-phone={phone}
 	data-count={count}
-	data-message-id={messageId}
 >
 	<aside class="m-2 rounded bg-white">
 		<img {src} alt="icon" class="h-[42.6px] w-[42.6px] object-cover" />

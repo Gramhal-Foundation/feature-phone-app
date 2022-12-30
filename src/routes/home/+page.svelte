@@ -15,9 +15,8 @@
 		if (element) {
 			const phone = element.getAttribute('data-phone');
 			const count = element.getAttribute('data-count');
-			const messageId = element.getAttribute('data-message-id');
 			if (count && Number(count) > 0) {
-				goto(`/messages/${phone}/view/${messageId}`);
+				goto(`/messages/${phone}`);
 			} else {
 				goto(`/messages/${phone}/new`);
 			}
@@ -48,7 +47,6 @@
 				phone="1234567890"
 				datetime="2021-01-01 12:00 AM"
 				count={0}
-				messageId={null}
 			/>
 		</li>
 	</ul>
@@ -63,7 +61,6 @@
 				phone="1234567890"
 				datetime="2021-01-01 12:00 AM"
 				count={1}
-				messageId="123"
 			/>
 		</li>
 	</ul>
@@ -78,7 +75,6 @@
 				phone="1234567890"
 				datetime="2021-01-01 12:00 AM"
 				count={1}
-				messageId="123"
 			/>
 		</li>
 	</ul>

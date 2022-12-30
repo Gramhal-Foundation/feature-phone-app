@@ -68,7 +68,7 @@
 								});
 								request.onsuccess = () => {
 									console.log('Audio saved to IndexedDB');
-									goto(`/messages/${$page.params.phone}/view/local/${id}`);
+									goto(`/messages/${$page.params.phone}/preview/${id}`);
 								};
 							};
 							request.onupgradeneeded = (event: any) => {
@@ -90,7 +90,7 @@
 
 									request.onsuccess = () => {
 										console.log('Audio saved to IndexedDB');
-										goto(`/messages/${$page.params.phone}/view/local/${id}`);
+										goto(`/messages/${$page.params.phone}/preview/${id}`);
 									};
 								};
 							};
