@@ -2,6 +2,9 @@
 	import { goto } from '$app/navigation';
 	import SoftwareKeys from '$lib/components/SoftwareKeys.svelte';
 	import toast, { Toaster } from 'svelte-french-toast';
+	import { setAuthTokens } from '$lib/utils/auth';
+	import axiosInstance from '$lib/utils/axios';
+	import type { AuthTokens } from '$lib/utils/auth';
 
 	let phone = '';
 	let inputDisabled = false;
@@ -20,12 +23,9 @@
 					}
 				});
 
-				await fetch('https://listag.net/api/v1/utter/login?action=get_otp&mobile_number=' + phone, {
-					method: 'GET',
-					headers: {
-						'Content-Type': 'application/json'
-					}
-				});
+				await axiosInstance.get(
+					'https://listag.net/api/v1/utter/login?action=get_otp&mobile_number=' + phone
+				);
 
 				activity.onsuccess = function (evt: { target: { result: { code: string[] } } }) {
 					resolve(evt.target.result.code[0]);
@@ -43,17 +43,11 @@
 			const otpString = await otpPromise;
 			const otp = otpString.split(' ')[0];
 			try {
-				const response = await fetch(
-					`https://listag.net/api/v1/utter/login?action=submit_otp&mobile_number=${phone}&otp=${otp}`,
-					{
-						method: 'GET',
-						headers: {
-							'Content-Type': 'application/json'
-						}
-					}
+				const response = await axiosInstance.get(
+					`/login?action=submit_otp&mobile_number=${phone}&otp=${otp}`
 				);
-				const data = await response.json();
-				localStorage.setItem('authTokens', JSON.stringify(data));
+				const data = response.data as AuthTokens;
+				setAuthTokens(data);
 				return Promise.resolve();
 			} catch (error) {
 				return Promise.reject(error);

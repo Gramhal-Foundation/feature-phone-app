@@ -1,4 +1,5 @@
 import { redirect } from '@sveltejs/kit';
+import { getAuthTokens } from '$lib/utils/auth';
 
 export const ssr = false;
 
@@ -8,8 +9,7 @@ export function load({ route }: { route: { id: string | null } }) {
 		return {};
 	} else {
 		const termsAccepted = localStorage.getItem('termsAccepted');
-		const authTokens = localStorage.getItem('authTokens');
-		if (termsAccepted && authTokens) {
+		if (termsAccepted && getAuthTokens()) {
 			return {};
 		} else if (termsAccepted) {
 			throw redirect(307, '/otp');

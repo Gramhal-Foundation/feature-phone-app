@@ -37,6 +37,7 @@
 	"type": "module",
 	"dependencies": {
 		"@sveltejs/adapter-static": "^1.0.0",
+		"axios": "^1.2.2",
 		"svelte-french-toast": "^1.0.3"
 	}
 }

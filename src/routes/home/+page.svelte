@@ -44,7 +44,7 @@
 		<li>
 			<ContactComponent
 				src="/uttrr.svg"
-				phone="1234567890"
+				phone="7760032885"
 				datetime="2021-01-01 12:00 AM"
 				count={0}
 			/>
@@ -72,7 +72,7 @@
 		<li>
 			<ContactComponent
 				src="/uttrr.svg"
-				phone="1234567890"
+				phone="8431839554"
 				datetime="2021-01-01 12:00 AM"
 				count={1}
 			/>
