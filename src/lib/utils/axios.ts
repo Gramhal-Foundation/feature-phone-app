@@ -1,5 +1,4 @@
 // Implement refresh token flow using axios interceptors and also use the same to add tokens to the request headers
-
 import axios, { AxiosHeaders } from 'axios';
 import { getAccessToken, getRefreshToken, setAuthTokens, clearAuthTokens } from './auth';
 
