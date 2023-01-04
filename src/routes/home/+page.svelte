@@ -5,9 +5,23 @@
 
 	import ContactComponent from '$lib/components/ContactComponent.svelte';
 	import SoftwareKeys from '$lib/components/SoftwareKeys.svelte';
+	import axiosInstance from '$lib/utils/axios';
+
+	let recentConversations = [];
+
+	const fetchRecentConversations = async () => {
+		try {
+			const { data } = await axiosInstance.get('/utter/get_message');
+			recentConversations = data;
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
 	onMount(() => {
 		Navigation.selectFirstElement();
+
+		// Fetch recent conversations
 	});
 
 	const handleSelectingContact = () => {
