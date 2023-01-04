@@ -3,10 +3,29 @@
 	import { onMount } from 'svelte';
 
 	import SoftwareKeys from '$lib/components/SoftwareKeys.svelte';
+	import axiosInstance from '$lib/utils/axios';
+	import toast, { Toaster } from 'svelte-french-toast';
+
+	interface Message {
+		_id: string;
+		created_at: number;
+		data?: any;
+		from_user_id: string;
+		is_viewed: boolean;
+		message_type: string;
+		to_user_id: string;
+		url: string;
+	}
+
+	interface MarkedAsReadResponse {
+		message: string;
+		next_chat: Message;
+	}
 
 	let playing = false;
 	let player: HTMLAudioElement | null = null;
 	let progress = 10;
+	let currentMessage: Message | null = null;
 
 	onMount(() => {
 		player = document.querySelector('audio');
@@ -23,8 +42,43 @@
 				// Calculate the progress in percentage
 				progress = ((player?.currentTime ?? 0) / (player?.duration ?? 1)) * 100;
 			};
+			getNextMessage();
 		}
 	});
+
+	const getNextMessage = () => {
+		axiosInstance
+			.get<Message>(`/get_message?from_user=${$page.params.phone}`)
+			.then((res) => {
+				if (res.data) {
+					player?.setAttribute('src', res.data.url);
+					currentMessage = res.data;
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+				toast.error('Something went wrong');
+			});
+	};
+
+	const markMessageAsRead = (chatId: string) => {
+		axiosInstance
+			.get<MarkedAsReadResponse>(`/mark_read?chat_id=${chatId}`)
+			.then((res) => {
+				if (res.data) {
+					toast.success(res.data.message);
+					if (player) {
+						player.currentTime = 0;
+						player.setAttribute('src', res.data.next_chat.url);
+					}
+					currentMessage = res.data.next_chat;
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+				toast.error('Something went wrong');
+			});
+	};
 
 	const handleKeyDown = (event: KeyboardEvent) => {
 		switch (event.key) {
@@ -38,6 +92,8 @@
 				return;
 			case 'ArrowRight':
 			case 'SoftRight':
+				player?.pause();
+				markMessageAsRead(currentMessage?._id ?? '');
 				return;
 			default:
 				return;
@@ -84,5 +140,7 @@
 </main>
 
 <audio class="invisible" />
+
+<Toaster />
 
 <svelte:window on:keydown={handleKeyDown} />
