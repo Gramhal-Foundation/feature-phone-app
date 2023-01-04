@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
+	import toast, { Toaster } from 'svelte-french-toast';
 
 	import SoftwareKeys from '$lib/components/SoftwareKeys.svelte';
 	import { goto } from '$app/navigation';
+	import axiosInstance from '$lib/utils/axios';
 
 	let player: HTMLAudioElement | null = null;
 	let playing = false;
@@ -66,6 +68,26 @@
 		};
 	});
 
+	const sendRecording = () => {
+		if (!audioBlob) return;
+		const formData = new FormData();
+		const blob = new Blob([audioBlob], {
+			type: 'audio/mp3'
+		});
+		formData.append('file', blob);
+		try {
+			axiosInstance.post(`/send_message?to_user=${$page.params.phone}`, formData, {
+				headers: {
+					'Content-Type': 'multipart/form-data'
+				}
+			});
+			toast.success('Recording sent');
+			goto('/home');
+		} catch (error) {
+			toast.error('Error sending recording');
+		}
+	};
+
 	const handleKeyDown = (event: KeyboardEvent) => {
 		switch (event.key) {
 			case 'ArrowLeft':
@@ -93,6 +115,7 @@
 				if (player && playing) {
 					player.pause();
 					player.currentTime = 0;
+					sendRecording();
 				}
 				break;
 		}
@@ -128,5 +151,7 @@
 </main>
 
 <audio class="invisible" />
+
+<Toaster />
 
 <svelte:window on:keydown={handleKeyDown} />
