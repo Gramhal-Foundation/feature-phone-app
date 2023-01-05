@@ -6,6 +6,7 @@
 	import ContactComponent from '$lib/components/ContactComponent.svelte';
 	import SoftwareKeys from '$lib/components/SoftwareKeys.svelte';
 	import axiosInstance from '$lib/utils/axios';
+	import toast, { Toaster } from 'svelte-french-toast';
 
 	let recentConversations = [];
 
@@ -15,6 +16,7 @@
 			recentConversations = data;
 		} catch (error) {
 			console.log(error);
+			toast.error('Error fetching recent conversations');
 		}
 	};
 
@@ -22,6 +24,7 @@
 		Navigation.selectFirstElement();
 
 		// Fetch recent conversations
+		fetchRecentConversations();
 	});
 
 	const handleSelectingContact = () => {
@@ -98,5 +101,7 @@
 		</div>
 	</SoftwareKeys>
 </main>
+
+<Toaster />
 
 <svelte:window on:keydown={handleKeyDown} />
