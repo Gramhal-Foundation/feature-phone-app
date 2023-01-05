@@ -1,0 +1,64 @@
+{
+	"name": "Uttrr",
+	"display": "Uttrr",
+	"version": "0.0.0.1",
+	"subtitle": "",
+	"description": "",
+	"type": "privileged",
+	"launch_path": "/index.html",
+	"icons": {
+		"56": "/img/img_uttrr_56.png",
+		"84": "/img/img_uttrr_84.png",
+		"112": "/img/img_uttrr_112.png"
+	},
+	"categories": ["social"],
+	"theme": "#8500DC",
+	"developer": {
+		"name": "",
+		"url": ""
+	},
+	"cursor": false,
+	"fullscreen": false,
+	"origin": "app://listag.net",
+	"userAgentInfo": "Uttrr/0.0.0.1",
+	"chrome": {
+		"statusbar": "overlap"
+	},
+	"permissions": {
+		"audio-channel-content": {
+			"description": "To play audio messgaes."
+		},
+		"audio-channel-normal": {
+			"description": "To play audio messages."
+		},
+		"volumemanager": {
+			"description": "To control system volume."
+		},
+		"tcp-socket": {
+			"description": "To detect network configurations."
+		}
+	},
+	"messages": [{ "serviceworker-notification": "/index.html" }, { "activity": "/index.html" }],
+	"activities": {
+		"share": {
+			"href": "/index.html",
+			"disposition": "window",
+			"filters": {
+				"type": "url",
+				"url": {
+					"required": true,
+					"regexp": "https?:.{1,2048}"
+				}
+			}
+		}
+	},
+	"locales": {
+		"en-US": {
+			"name": "Uttrr",
+			"subtitle": "",
+			"description": ""
+		}
+	},
+	"default_locale": "en-US",
+	"orientation": ["portrait-primary"]
+}
