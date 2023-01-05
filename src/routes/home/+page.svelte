@@ -8,12 +8,24 @@
 	import axiosInstance from '$lib/utils/axios';
 	import toast, { Toaster } from 'svelte-french-toast';
 
-	let recentConversations = [];
+	let recentConversations: Message[] = [];
+
+	interface Message {
+		max_timestamp: any;
+		mobile_number: string;
+		name: string;
+		unread_count: number;
+		user_id: string;
+	}
+
+	interface HomeMessages {
+		messages: Message[];
+	}
 
 	const fetchRecentConversations = async () => {
 		try {
-			const { data } = await axiosInstance.get('/utter/get_message');
-			recentConversations = data;
+			const { data } = await axiosInstance.get<HomeMessages>('/home');
+			recentConversations = data.messages;
 		} catch (error) {
 			console.log(error);
 			toast.error('Error fetching recent conversations');
@@ -86,14 +98,16 @@
 		<h2 class="text-sm">Contacts</h2>
 	</div>
 	<ul>
-		<li>
-			<ContactComponent
-				src="/uttrr.svg"
-				phone="8431839554"
-				datetime="2021-01-01 12:00 AM"
-				count={1}
-			/>
-		</li>
+		{#each recentConversations as conversation}
+			<li>
+				<ContactComponent
+					src="/uttrr.svg"
+					phone={conversation.mobile_number}
+					datetime="2021-01-01 12:00 AM"
+					count={conversation.unread_count}
+				/>
+			</li>
+		{/each}
 	</ul>
 	<SoftwareKeys>
 		<div slot="center" class="flex justify-center">
