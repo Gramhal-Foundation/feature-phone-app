@@ -9,6 +9,9 @@
 	import toast, { Toaster } from 'svelte-french-toast';
 
 	let recentConversations: Message[] = [];
+	let userMessageCount: number = 0;
+	let usersPhone: string = '7760032885';
+	let userMessageDateTime: string | null = null;
 
 	interface Message {
 		max_timestamp: any;
@@ -16,6 +19,7 @@
 		name: string;
 		unread_count: number;
 		user_id: string;
+		last_message_at: string;
 	}
 
 	interface HomeMessages {
@@ -25,6 +29,16 @@
 	const fetchRecentConversations = async () => {
 		try {
 			const { data } = await axiosInstance.get<HomeMessages>('/home');
+			const userMessageIndex = data.messages.findIndex(
+				(message) => message.mobile_number === usersPhone
+			);
+			const userMessage = data.messages[userMessageIndex];
+			// Remove user message from recent conversations
+			data.messages.splice(userMessageIndex, 1);
+			if (userMessage) {
+				userMessageCount = userMessage.unread_count;
+				userMessageDateTime = userMessage.last_message_at;
+			}
 			recentConversations = data.messages;
 		} catch (error) {
 			console.log(error);
@@ -73,9 +87,9 @@
 		<li>
 			<ContactComponent
 				src="/uttrr.svg"
-				phone="7760032885"
-				datetime="2021-01-01 12:00 AM"
-				count={0}
+				phone={usersPhone}
+				datetime={userMessageDateTime}
+				count={userMessageCount}
 			/>
 		</li>
 	</ul>
