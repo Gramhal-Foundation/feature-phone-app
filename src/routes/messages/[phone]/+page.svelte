@@ -5,16 +5,18 @@
 	import SoftwareKeys from '$lib/components/SoftwareKeys.svelte';
 	import axiosInstance from '$lib/utils/axios';
 	import toast, { Toaster } from 'svelte-french-toast';
+	import { goto } from '$app/navigation';
 
 	interface Message {
 		_id: string;
-		created_at: number;
 		data?: any;
 		from_user_id: string;
 		is_viewed: boolean;
 		message_type: string;
 		to_user_id: string;
 		url: string;
+		created_at: string;
+		remaining: number;
 	}
 
 	interface MarkedAsReadResponse {
@@ -24,7 +26,7 @@
 
 	let playing = false;
 	let player: HTMLAudioElement | null = null;
-	let progress = 10;
+	let progress = 0;
 	let currentMessage: Message | null = null;
 
 	onMount(() => {
@@ -48,11 +50,14 @@
 
 	const getNextMessage = () => {
 		axiosInstance
-			.get<Message>(`/get_message?from_user=${$page.params.phone}`)
+			.get<Message>(`/get_message?from_user_mobile_number=${$page.params.phone}`)
 			.then((res) => {
 				if (res.data) {
 					player?.setAttribute('src', res.data.url);
 					currentMessage = res.data;
+					if (!currentMessage?._id) {
+						goto('/home');
+					}
 				}
 			})
 			.catch((err) => {
@@ -63,7 +68,7 @@
 
 	const markMessageAsRead = (chatId: string) => {
 		axiosInstance
-			.get<MarkedAsReadResponse>(`/mark_read?chat_id=${chatId}`)
+			.post<MarkedAsReadResponse>(`/mark_read?chat_id=${chatId}`)
 			.then((res) => {
 				if (res.data) {
 					toast.success(res.data.message);
@@ -71,7 +76,11 @@
 						player.currentTime = 0;
 						player.setAttribute('src', res.data.next_chat.url);
 					}
-					currentMessage = res.data.next_chat;
+					if (res.data.next_chat) {
+						currentMessage = res.data.next_chat;
+					} else {
+						goto('/home');
+					}
 				}
 			})
 			.catch((err) => {
@@ -118,12 +127,16 @@
 				</div>
 			</div>
 		</div>
-		<div
-			class="flex h-8 w-8 items-center justify-center rounded-full bg-green font-semibold text-white"
-		>
-			1
-		</div>
-		<div class="text-center text-sm text-light">22/06/22 05:06 pm</div>
+		{#if currentMessage}
+			{#if currentMessage.remaining > 0}
+				<div
+					class="flex h-8 w-8 items-center justify-center rounded-full bg-green font-semibold text-white"
+				>
+					{currentMessage.remaining}
+				</div>
+			{/if}
+			<div class="text-center text-sm text-light">{currentMessage.created_at}</div>
+		{/if}
 	</section>
 	<SoftwareKeys>
 		<div slot="left" class="flex items-center justify-start">
