@@ -67,23 +67,29 @@
 		};
 	});
 
-	const sendRecording = () => {
-		if (!audioBlob) return;
-		const formData = new FormData();
-		const blob = new Blob([audioBlob], {
-			type: 'audio/mp3'
-		});
-		formData.append('file', blob);
-		try {
-			axiosInstance.post(`/send_message?to_user=${$page.params.phone}`, formData, {
-				headers: {
-					'Content-Type': 'multipart/form-data'
-				}
+	const sendRecording = async () => {
+		if (!audioBlob) {
+			return;
+		} else {
+			const formData = new FormData();
+			const blob = new Blob([audioBlob], {
+				type: 'audio/mp3'
 			});
-			toast.success('Recording sent');
-			goto('/home');
-		} catch (error) {
-			toast.error('Error sending recording');
+			formData.append('file', blob);
+			try {
+				const response = await axiosInstance.post(
+					`/send_message?to_user=${$page.params.phone}`,
+					formData,
+					{
+						headers: {
+							'Content-Type': 'multipart/form-data'
+						}
+					}
+				);
+				goto('/home');
+			} catch (error) {
+				toast.error('Error sending recording');
+			}
 		}
 	};
 
@@ -114,8 +120,12 @@
 				if (player && playing) {
 					player.pause();
 					player.currentTime = 0;
-					sendRecording();
 				}
+				toast.promise(sendRecording(), {
+					loading: 'Sending recording',
+					success: 'Recording sent',
+					error: 'Error sending recording'
+				});
 				break;
 		}
 	};
