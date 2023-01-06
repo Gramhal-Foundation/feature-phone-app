@@ -78,7 +78,7 @@
 			formData.append('file', blob);
 			try {
 				const response = await axiosInstance.post(
-					`/send_message?to_user=${$page.params.phone}`,
+					`/send_message?to_user_mobile_number=${$page.params.phone}`,
 					formData,
 					{
 						headers: {
