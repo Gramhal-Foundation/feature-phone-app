@@ -12,9 +12,11 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(async (config) => {
 	const accessToken = getAccessToken();
 	if (accessToken) {
-		config.headers = { ...config.headers } as AxiosHeaders;
-		config.headers.set('Authorization', `Bearer ${accessToken}`);
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		config.headers.Authorization = `Bearer ${accessToken}`;
 	}
+
 	return config;
 });
 
