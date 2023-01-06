@@ -31,7 +31,6 @@
 			request.onsuccess = (event: any) => {
 				audioBlob = event.target.result.audio;
 				if (!audioBlob) return;
-				console.log(audioBlob);
 				const audioUrl = URL.createObjectURL(audioBlob);
 				player = document.querySelector('audio');
 				if (!player) {

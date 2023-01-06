@@ -67,7 +67,6 @@
 									audio: audioBlob
 								});
 								request.onsuccess = () => {
-									console.log('Audio saved to IndexedDB');
 									goto(`/messages/${$page.params.phone}/preview/${id}`);
 								};
 							};
@@ -89,7 +88,6 @@
 									});
 
 									request.onsuccess = () => {
-										console.log('Audio saved to IndexedDB');
 										goto(`/messages/${$page.params.phone}/preview/${id}`);
 									};
 								};
