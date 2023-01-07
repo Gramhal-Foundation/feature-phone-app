@@ -72,12 +72,13 @@
 			.then((res) => {
 				if (res.data) {
 					toast.success(res.data.message);
-					if (player) {
-						player.currentTime = 0;
-						player.setAttribute('src', res.data.next_chat.url);
-					}
+
 					if (res.data.next_chat) {
 						currentMessage = res.data.next_chat;
+						if (player) {
+							player.currentTime = 0;
+							player.setAttribute('src', res.data.next_chat.url);
+						}
 					} else {
 						goto('/home');
 					}
