@@ -10,6 +10,9 @@ export function load({ route }: { route: { id: string | null } }) {
 	} else {
 		const termsAccepted = localStorage.getItem('termsAccepted');
 		if (termsAccepted && getAuthTokens()) {
+			if (route.id === '/') {
+				throw redirect(307, '/home');
+			}
 			return {};
 		} else if (termsAccepted) {
 			throw redirect(307, '/otp');
