@@ -28,6 +28,7 @@
 	let player: HTMLAudioElement | null = null;
 	let progress = 0;
 	let currentMessage: Message | null = null;
+	let loading: boolean = false;
 
 	onMount(() => {
 		player = document.querySelector('audio');
@@ -49,6 +50,7 @@
 	});
 
 	const getNextMessage = () => {
+		loading = true;
 		axiosInstance
 			.get<Message>(`/get_message?from_user_mobile_number=${$page.params.phone}`)
 			.then((res) => {
@@ -64,6 +66,7 @@
 				console.log(err);
 				toast.error('Something went wrong');
 			});
+		loading = false;
 	};
 
 	const markMessageAsRead = async (chatId: string, gotoHome: boolean = true) => {
@@ -84,6 +87,7 @@
 	};
 
 	const handleKeyDown = async (event: KeyboardEvent) => {
+		if (loading) return;
 		switch (event.key) {
 			case 'ArrowLeft':
 			case 'SoftLeft':
@@ -98,24 +102,23 @@
 					// TODO: Change the speaker type
 				} else {
 					// Go to recording page
-					if (player?.currentTime ?? 0 > 0) {
-						await toast.promise(markMessageAsRead(currentMessage?._id ?? '', false), {
-							loading: 'Marking as read',
-							success: 'Marked as read',
-							error: 'Something went wrong'
-						});
-					}
 					goto(`/messages/${$page.params.phone}/new`);
 				}
 				return;
 			case 'ArrowRight':
 			case 'SoftRight':
 				player?.pause();
-				await toast.promise(markMessageAsRead(currentMessage?._id ?? ''), {
-					loading: 'Marking as read',
-					success: 'Marked as read',
-					error: 'Something went wrong'
-				});
+				loading = true;
+				try {
+					await toast.promise(markMessageAsRead(currentMessage?._id ?? ''), {
+						loading: 'Marking as read',
+						success: 'Marked as read',
+						error: 'Something went wrong'
+					});
+				} catch (error) {
+					console.error(error);
+				}
+				loading = false;
 				return;
 			default:
 				return;
@@ -153,21 +156,27 @@
 	</section>
 	<SoftwareKeys>
 		<div slot="left" class="flex items-center justify-start">
-			{#if playing}
-				<img class="h-4 w-4" src="/pause.svg" alt="pause" />
-			{:else}
-				<img class="h-4 w-4" src="/speaker.svg" alt="play" />
+			{#if !loading}
+				{#if playing}
+					<img class="h-4 w-4" src="/pause.svg" alt="pause" />
+				{:else}
+					<img class="h-4 w-4" src="/speaker.svg" alt="play" />
+				{/if}
 			{/if}
 		</div>
 		<div slot="center" class="flex items-center justify-center">
-			{#if playing}
-				<!-- TODO: add icons to switch between types of speaker output -->
-			{:else}
-				<img class="h-4 w-4" src="/mic.svg" alt="mic" />
+			{#if !loading}
+				{#if playing}
+					<!-- TODO: add icons to switch between types of speaker output -->
+				{:else}
+					<img class="h-4 w-4" src="/mic.svg" alt="mic" />
+				{/if}
 			{/if}
 		</div>
 		<div slot="right" class="flex items-center justify-end">
-			<img class="h-4 w-4" src="/tick.svg" alt="ok" />
+			{#if !loading}
+				<img class="h-4 w-4" src="/tick.svg" alt="ok" />
+			{/if}
 		</div>
 	</SoftwareKeys>
 </main>
