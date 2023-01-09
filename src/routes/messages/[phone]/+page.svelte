@@ -4,7 +4,7 @@
 
 	import SoftwareKeys from '$lib/components/SoftwareKeys.svelte';
 	import axiosInstance from '$lib/utils/axios';
-	import toast, { Toaster } from 'svelte-french-toast';
+	import toast from 'svelte-french-toast';
 	import { goto } from '$app/navigation';
 
 	interface Message {
@@ -66,31 +66,24 @@
 			});
 	};
 
-	const markMessageAsRead = (chatId: string) => {
-		axiosInstance
-			.post<MarkedAsReadResponse>(`/mark_read?chat_id=${chatId}`)
-			.then((res) => {
-				if (res.data) {
-					toast.success(res.data.message);
-
-					if (res.data.next_chat) {
-						currentMessage = res.data.next_chat;
-						if (player) {
-							player.currentTime = 0;
-							player.setAttribute('src', res.data.next_chat.url);
-						}
-					} else {
-						goto('/home');
-					}
+	const markMessageAsRead = async (chatId: string, gotoHome: boolean = true) => {
+		const res = await axiosInstance.post<MarkedAsReadResponse>(`/mark_read?chat_id=${chatId}`);
+		if (res.data) {
+			if (res.data.next_chat) {
+				currentMessage = res.data.next_chat;
+				if (player) {
+					player.currentTime = 0;
+					player.setAttribute('src', res.data.next_chat.url);
 				}
-			})
-			.catch((err) => {
-				console.log(err);
-				toast.error('Something went wrong');
-			});
+			} else {
+				if (gotoHome) {
+					goto('/home');
+				}
+			}
+		}
 	};
 
-	const handleKeyDown = (event: KeyboardEvent) => {
+	const handleKeyDown = async (event: KeyboardEvent) => {
 		switch (event.key) {
 			case 'ArrowLeft':
 			case 'SoftLeft':
@@ -105,13 +98,24 @@
 					// TODO: Change the speaker type
 				} else {
 					// Go to recording page
+					if (player?.currentTime ?? 0 > 0) {
+						await toast.promise(markMessageAsRead(currentMessage?._id ?? '', false), {
+							loading: 'Marking as read',
+							success: 'Marked as read',
+							error: 'Something went wrong'
+						});
+					}
 					goto(`/messages/${$page.params.phone}/new`);
 				}
 				return;
 			case 'ArrowRight':
 			case 'SoftRight':
 				player?.pause();
-				markMessageAsRead(currentMessage?._id ?? '');
+				await toast.promise(markMessageAsRead(currentMessage?._id ?? ''), {
+					loading: 'Marking as read',
+					success: 'Marked as read',
+					error: 'Something went wrong'
+				});
 				return;
 			default:
 				return;
@@ -169,7 +173,5 @@
 </main>
 
 <audio class="invisible" />
-
-<Toaster />
 
 <svelte:window on:keydown={handleKeyDown} />

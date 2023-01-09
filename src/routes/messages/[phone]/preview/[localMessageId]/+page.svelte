@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
-	import toast, { Toaster } from 'svelte-french-toast';
+	import toast from 'svelte-french-toast';
 
 	import SoftwareKeys from '$lib/components/SoftwareKeys.svelte';
 	import { goto } from '$app/navigation';
@@ -160,7 +160,5 @@
 </main>
 
 <audio class="invisible" />
-
-<Toaster />
 
 <svelte:window on:keydown={handleKeyDown} />

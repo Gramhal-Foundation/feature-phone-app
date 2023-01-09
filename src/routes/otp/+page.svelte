@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import SoftwareKeys from '$lib/components/SoftwareKeys.svelte';
-	import toast, { Toaster } from 'svelte-french-toast';
+	import toast from 'svelte-french-toast';
 	import { setAuthTokens } from '$lib/utils/auth';
 	import axiosInstance from '$lib/utils/axios';
 	import type { AuthTokens } from '$lib/utils/auth';
@@ -116,5 +116,4 @@
 	</SoftwareKeys>
 </main>
 
-<Toaster />
 <svelte:window on:keydown={handleKeyDown} />

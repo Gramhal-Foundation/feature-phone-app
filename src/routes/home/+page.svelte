@@ -6,7 +6,7 @@
 	import ContactComponent from '$lib/components/ContactComponent.svelte';
 	import SoftwareKeys from '$lib/components/SoftwareKeys.svelte';
 	import axiosInstance from '$lib/utils/axios';
-	import toast, { Toaster } from 'svelte-french-toast';
+	import toast from 'svelte-french-toast';
 
 	let recentConversations: Message[] = [];
 	let userMessageCount: number = 0;
@@ -163,7 +163,5 @@
 		</div>
 	</SoftwareKeys>
 </main>
-
-<Toaster />
 
 <svelte:window on:keydown={handleKeyDown} />
