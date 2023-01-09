@@ -51,6 +51,14 @@
 
 		// Fetch recent conversations
 		fetchRecentConversations();
+
+		// Automatically refresh recent conversations every 5 seconds
+		let recentConversationsInterval = setInterval(fetchRecentConversations, 5000);
+
+		return () => {
+			// Clear interval on unmount to prevent memory leaks of recent conversations
+			clearInterval(recentConversationsInterval);
+		};
 	});
 
 	const handleSelectingContact = () => {
