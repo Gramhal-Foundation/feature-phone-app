@@ -19,7 +19,7 @@
 	};
 </script>
 
-<main class="grid h-screen w-screen grid-rows-2 pb-7">
+<main class="grid h-screen w-screen grid-rows-2">
 	<section class="flex h-full w-full items-center justify-center bg-white">
 		<img class="h-20 w-20" src="/uttrr_with_name.svg" alt="uttrr" />
 	</section>

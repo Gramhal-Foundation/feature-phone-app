@@ -111,7 +111,7 @@
 	};
 </script>
 
-<main class="grid h-screen grid-rows-5  pb-7">
+<main class="grid h-screen grid-rows-5">
 	<section class="row-span-2 flex flex-col items-center space-y-4 bg-green py-4 px-4">
 		<div class="flex flex-col items-center">
 			<img src="/uttrr.svg" alt="logo" class="h-14 w-14" />

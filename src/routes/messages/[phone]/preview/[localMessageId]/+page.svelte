@@ -131,7 +131,7 @@
 	};
 </script>
 
-<main class="flex h-screen flex-col bg-primary pb-7">
+<main class="flex h-screen flex-col bg-primary">
 	<section class="flex flex-col items-center space-y-4 py-4 px-4">
 		<div class="flex flex-col items-center">
 			<img src="/uttrr.svg" alt="logo" class="h-16 w-16" />

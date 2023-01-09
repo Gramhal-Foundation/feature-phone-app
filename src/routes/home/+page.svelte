@@ -81,8 +81,10 @@
 				handleSelectingContact();
 				return;
 			case 'ArrowDown':
+				event.preventDefault();
 				return Navigation.Down();
 			case 'ArrowUp':
+				event.preventDefault();
 				return Navigation.Up();
 			default:
 				return;
@@ -90,7 +92,7 @@
 	};
 </script>
 
-<main class="pb-7">
+<main>
 	<ul>
 		<li>
 			<ContactComponent

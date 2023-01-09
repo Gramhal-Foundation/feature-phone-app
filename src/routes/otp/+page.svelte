@@ -89,7 +89,7 @@
 	};
 </script>
 
-<main class="grid h-screen w-screen grid-rows-3 pb-7">
+<main class="grid h-screen w-screen grid-rows-3">
 	<section class="row-span-1 flex items-center justify-center bg-primary">
 		<h2 class="font-semibold text-white">Enter Phone Number</h2>
 	</section>
