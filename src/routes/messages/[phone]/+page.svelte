@@ -100,6 +100,14 @@
 					player?.play();
 				}
 				return;
+			case 'Enter':
+				if (playing) {
+					// TODO: Change the speaker type
+				} else {
+					// Go to recording page
+					goto(`/messages/${$page.params.phone}/new`);
+				}
+				return;
 			case 'ArrowRight':
 			case 'SoftRight':
 				player?.pause();
@@ -145,6 +153,13 @@
 				<img class="h-4 w-4" src="/pause.svg" alt="pause" />
 			{:else}
 				<img class="h-4 w-4" src="/speaker.svg" alt="play" />
+			{/if}
+		</div>
+		<div slot="center" class="flex items-center justify-center">
+			{#if playing}
+				<!-- TODO: add icons to switch between types of speaker output -->
+			{:else}
+				<img class="h-4 w-4" src="/mic.svg" alt="mic" />
 			{/if}
 		</div>
 		<div slot="right" class="flex items-center justify-end">

@@ -132,7 +132,7 @@
 </script>
 
 <main class="flex h-screen flex-col bg-primary">
-	<section class="flex flex-col items-center space-y-4 py-4 px-4">
+	<section class="flex flex-grow flex-col items-center space-y-4 py-4 px-4">
 		<div class="flex flex-col items-center">
 			<img src="/uttrr.svg" alt="logo" class="h-16 w-16" />
 			<h1 class="text-center text-lg font-semibold text-white">{$page.params.phone}</h1>
