@@ -92,7 +92,7 @@
 	};
 </script>
 
-<main>
+<main class="h-full">
 	<ul>
 		<li>
 			<ContactComponent

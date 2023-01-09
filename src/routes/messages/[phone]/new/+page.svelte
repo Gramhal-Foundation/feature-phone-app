@@ -124,14 +124,18 @@
 
 {#if !loading}
 	<main class="flex h-screen flex-col bg-primary">
-		<section class="flex flex-col items-center space-y-4 py-4 px-4">
+		<section class="flex h-full flex-col items-center space-y-4 py-4 px-4">
 			<div class="flex flex-col items-center">
 				<img src="/uttrr.svg" alt="logo" class="h-16 w-16" />
 				<h1 class="text-center text-lg font-semibold text-white">{$page.params.phone}</h1>
 			</div>
 			{#if recording}
 				<img src="/mic.svg" alt="mic" class="h-12 w-12 animate-pulse" />
-				<span class="text-center text-white">{time}</span>
+				{#if time === 60}
+					<span class="text-center text-white">01:00</span>
+				{:else}
+					<span class="text-center text-white">00:{time}</span>
+				{/if}
 			{/if}
 		</section>
 		<SoftwareKeys>
