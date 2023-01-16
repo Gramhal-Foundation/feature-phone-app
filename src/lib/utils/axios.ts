@@ -3,7 +3,7 @@ import axios from 'axios';
 import { getAccessToken, getRefreshToken, setAuthTokens, clearAuthTokens } from './auth';
 
 const axiosInstance = axios.create({
-	baseURL: 'http://127.0.0.1:5000/api/v1/utter',
+	baseURL: 'https://uttrr.com/api/v1/utter',
 	headers: {
 		'Content-Type': 'application/json'
 	}
