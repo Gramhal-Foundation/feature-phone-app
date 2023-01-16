@@ -149,61 +149,62 @@
 	};
 </script>
 
-<main class="grid h-screen grid-rows-5">
-	<section class="row-span-2 flex flex-col items-center space-y-4 bg-green py-4 px-4">
-		<div class="flex flex-col items-center">
-			<img src="/uttrr.svg" alt="logo" class="h-14 w-14" />
-			<h1 class="text-center text-lg font-semibold text-white">{$page.params.phone}</h1>
-		</div>
-	</section>
-	<section class="row-span-3 flex flex-col items-center justify-between p-4">
-		<div class="flex w-full items-center justify-start space-x-3">
-			<img class="h-8 w-auto flex-none" src="/green-play.svg" alt="pause" />
-			<!-- Make a progrees bar suing progress as width -->
-			<div class="flex-1">
-				<div class="h-1 w-full rounded bg-progress">
-					<div class="h-1 rounded bg-green" style="width: {progress}%" />
+{#if !pageLoading}
+	<main class="grid h-screen grid-rows-5">
+		<section class="row-span-2 flex flex-col items-center space-y-4 bg-green py-4 px-4">
+			<div class="flex flex-col items-center">
+				<img src="/uttrr.svg" alt="logo" class="h-14 w-14" />
+				<h1 class="text-center text-lg font-semibold text-white">{$page.params.phone}</h1>
+			</div>
+		</section>
+		<section class="row-span-3 flex flex-col items-center justify-between p-4">
+			<div class="flex w-full items-center justify-start space-x-3">
+				<img class="h-8 w-auto flex-none" src="/green-play.svg" alt="pause" />
+				<!-- Make a progrees bar suing progress as width -->
+				<div class="flex-1">
+					<div class="h-1 w-full rounded bg-progress">
+						<div class="h-1 rounded bg-green" style="width: {progress}%" />
+					</div>
 				</div>
 			</div>
-		</div>
-		{#if currentMessage}
-			{#if currentMessage.remaining > 0}
-				<div
-					class="flex h-8 w-8 items-center justify-center rounded-full bg-green font-semibold text-white"
-				>
-					{currentMessage.remaining}
-				</div>
-			{/if}
-			<div class="text-center text-sm text-light">{currentMessage.created_at}</div>
-		{/if}
-	</section>
-	<SoftwareKeys>
-		<div slot="left" class="flex items-center justify-start">
-			{#if !loading}
-				{#if playing}
-					<img class="h-4 w-4" src="/pause.svg" alt="pause" />
-				{:else}
-					<img class="h-4 w-4" src="/speaker.svg" alt="play" />
+			{#if currentMessage}
+				{#if currentMessage.remaining > 0}
+					<div
+						class="flex h-8 w-8 items-center justify-center rounded-full bg-green font-semibold text-white"
+					>
+						{currentMessage.remaining}
+					</div>
 				{/if}
+				<div class="text-center text-sm text-light">{currentMessage.created_at}</div>
 			{/if}
-		</div>
-		<div slot="center" class="flex items-center justify-center">
-			{#if !loading}
-				{#if playing}
-					<!-- TODO: add icons to switch between types of speaker output -->
-				{:else}
-					<img class="h-4 w-4" src="/mic.svg" alt="mic" />
+		</section>
+		<SoftwareKeys>
+			<div slot="left" class="flex items-center justify-start">
+				{#if !loading}
+					{#if playing}
+						<img class="h-4 w-4" src="/pause.svg" alt="pause" />
+					{:else}
+						<img class="h-4 w-4" src="/speaker.svg" alt="play" />
+					{/if}
 				{/if}
-			{/if}
-		</div>
-		<div slot="right" class="flex items-center justify-end">
-			{#if !loading}
-				<img class="h-4 w-4" src="/tick.svg" alt="ok" />
-			{/if}
-		</div>
-	</SoftwareKeys>
-</main>
-
+			</div>
+			<div slot="center" class="flex items-center justify-center">
+				{#if !loading}
+					{#if playing}
+						<!-- TODO: add icons to switch between types of speaker output -->
+					{:else}
+						<img class="h-4 w-4" src="/mic.svg" alt="mic" />
+					{/if}
+				{/if}
+			</div>
+			<div slot="right" class="flex items-center justify-end">
+				{#if !loading}
+					<img class="h-4 w-4" src="/tick.svg" alt="ok" />
+				{/if}
+			</div>
+		</SoftwareKeys>
+	</main>
+{/if}
 <audio class="invisible" />
 
 <svelte:window on:keydown={handleKeyDown} />
