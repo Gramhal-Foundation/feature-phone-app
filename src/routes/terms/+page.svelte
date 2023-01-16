@@ -20,7 +20,7 @@
 		const lang = getLocale();
 		pageLoading = true;
 		axiosInstance
-			.get(`translations/${lang}/terms`)
+			.get<Translations>(`translations/${lang}/terms`)
 			.then((res) => {
 				translations = res.data;
 			})

@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 
 	import SoftwareKeys from '$lib/components/SoftwareKeys.svelte';
 	import axiosInstance from '$lib/utils/axios';
 	import toast from 'svelte-french-toast';
 	import { goto } from '$app/navigation';
+	import { getLocale } from '$lib/utils';
 
 	interface Message {
 		_id: string;
@@ -24,29 +25,51 @@
 		next_chat: Message;
 	}
 
+	interface Translations {
+		markingAsRead: string;
+		markedAsRead: string;
+		markAsReadError: string;
+	}
+
 	let playing = false;
 	let player: HTMLAudioElement | null = null;
 	let progress = 0;
 	let currentMessage: Message | null = null;
 	let loading: boolean = false;
+	let translations: Translations | null = null;
+	let pageLoading: boolean = true;
 
 	onMount(() => {
-		player = document.querySelector('audio');
-		if (!player) {
-			return;
-		} else {
-			player.onpause = () => {
-				playing = false;
-			};
-			player.onplay = () => {
-				playing = true;
-			};
-			player.ontimeupdate = () => {
-				// Calculate the progress in percentage
-				progress = ((player?.currentTime ?? 0) / (player?.duration ?? 1)) * 100;
-			};
-			getNextMessage();
-		}
+		const lang = getLocale();
+		pageLoading = true;
+		axiosInstance
+			.get<Translations>(`translations/${lang}/messages`)
+			.then((res) => {
+				translations = res.data;
+			})
+			.catch((err) => {
+				console.error('There was an error while fetching language data: ', err);
+			})
+			.finally(async () => {
+				pageLoading = false;
+				await tick();
+				player = document.querySelector('audio');
+				if (!player) {
+					return;
+				} else {
+					player.onpause = () => {
+						playing = false;
+					};
+					player.onplay = () => {
+						playing = true;
+					};
+					player.ontimeupdate = () => {
+						// Calculate the progress in percentage
+						progress = ((player?.currentTime ?? 0) / (player?.duration ?? 1)) * 100;
+					};
+					getNextMessage();
+				}
+			});
 	});
 
 	const getNextMessage = () => {
@@ -111,9 +134,9 @@
 				loading = true;
 				try {
 					await toast.promise(markMessageAsRead(currentMessage?._id ?? ''), {
-						loading: 'Marking as read',
-						success: 'Marked as read',
-						error: 'Something went wrong'
+						loading: translations?.markingAsRead ?? 'Marking as read...',
+						success: translations?.markedAsRead ?? 'Marked as read',
+						error: translations?.markAsReadError ?? 'Error marking as read'
 					});
 				} catch (error) {
 					console.error(error);
