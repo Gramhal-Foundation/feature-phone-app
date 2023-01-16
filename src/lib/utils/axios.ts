@@ -3,7 +3,7 @@ import axios from 'axios';
 import { getAccessToken, getRefreshToken, setAuthTokens, clearAuthTokens } from './auth';
 
 const axiosInstance = axios.create({
-	baseURL: 'https://listag.net/api/v1/utter',
+	baseURL: 'https://uttrr.com/api/v1/utter',
 	headers: {
 		'Content-Type': 'application/json'
 	}
