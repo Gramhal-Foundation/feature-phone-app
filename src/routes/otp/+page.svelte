@@ -5,10 +5,40 @@
 	import { setAuthTokens } from '$lib/utils/auth';
 	import axiosInstance from '$lib/utils/axios';
 	import type { AuthTokens } from '$lib/utils/auth';
+	import { onMount } from 'svelte';
+	import { getLocale } from '$lib/utils';
+
+	interface Translations {
+		enterPhone: string;
+		phoneLabel: string;
+		phoneError: string;
+		verifyingOtp: string;
+		otpVerified: string;
+		otpError: string;
+	}
 
 	let phone = '';
 	let inputDisabled = false;
 	let loading = false;
+	let translations: Translations | null = null;
+	let pageLoading: boolean = true;
+
+	onMount(() => {
+		// Fetch translations from server
+		const lang = getLocale();
+		pageLoading = true;
+		axiosInstance
+			.get(`translations/${lang}/otp`)
+			.then((res) => {
+				translations = res.data;
+			})
+			.catch((err) => {
+				console.error('There was an error while fetching language data: ', err);
+			})
+			.finally(() => {
+				pageLoading = false;
+			});
+	});
 
 	const verifyOTP = async (phone: string) => {
 		// TODO: Make an API call to send OTP to the phone number
@@ -58,22 +88,24 @@
 	};
 
 	const handleKeyDown = async (evt: KeyboardEvent) => {
+		// Prevent default behaviour of the keys when the page is loading
+		if (pageLoading) return;
 		switch (evt.key) {
 			case 'ArrowRight':
 			case 'SoftRight':
 				if (!loading) {
 					// Check if the string is a valid phone number or not
 					if (phone.length !== 10 || isNaN(Number(phone))) {
-						toast.error('Please enter a valid phone number');
+						toast.error(translations?.phoneError ?? 'Please enter a valid phone number');
 						return;
 					}
 					inputDisabled = true;
 					loading = true;
 					try {
 						await toast.promise(verifyOTP(phone), {
-							loading: 'Verifying OTP...',
-							success: 'OTP verified!',
-							error: 'OTP verification failed'
+							loading: translations?.verifyingOtp ?? 'Verifying OTP...',
+							success: translations?.otpVerified ?? 'OTP verified!',
+							error: translations?.otpError ?? 'OTP verification failed'
 						});
 						goto('/home');
 					} catch (error) {
@@ -89,31 +121,32 @@
 	};
 </script>
 
-<main class="grid h-screen w-screen grid-rows-3">
-	<section class="row-span-1 flex items-center justify-center bg-primary">
-		<h2 class="font-semibold text-white">Enter Phone Number</h2>
-	</section>
-	<section class="row-span-2 bg-white p-4">
-		<div class="mt-4">
-			<label for="phone" class="sr-only">Phone</label>
-			<input
-				type="text"
-				name="phone"
-				id="phone"
-				class="border-gray-300 block w-full rounded-md shadow-sm focus:border-primary focus:ring-primary disabled:opacity-50 sm:text-sm"
-				placeholder="1234567890"
-				bind:value={phone}
-				disabled={inputDisabled}
-			/>
-		</div>
-	</section>
-	<SoftwareKeys>
-		<div slot="right" class="flex justify-end text-white">
-			{#if !loading}
-				<img class="h-4 w-4" src="/tick.svg" alt="ok" />
-			{/if}
-		</div>
-	</SoftwareKeys>
-</main>
-
+{#if !pageLoading}
+	<main class="grid h-screen w-screen grid-rows-3">
+		<section class="row-span-1 flex items-center justify-center bg-primary">
+			<h2 class="font-semibold text-white">{translations?.enterPhone ?? 'Enter Phone Number'}</h2>
+		</section>
+		<section class="row-span-2 bg-white p-4">
+			<div class="mt-4">
+				<label for="phone" class="sr-only">{translations?.phoneLabel ?? 'Phone Number'}</label>
+				<input
+					type="text"
+					name="phone"
+					id="phone"
+					class="border-gray-300 block w-full rounded-md shadow-sm focus:border-primary focus:ring-primary disabled:opacity-50 sm:text-sm"
+					placeholder="1234567890"
+					bind:value={phone}
+					disabled={inputDisabled}
+				/>
+			</div>
+		</section>
+		<SoftwareKeys>
+			<div slot="right" class="flex justify-end text-white">
+				{#if !loading}
+					<img class="h-4 w-4" src="/tick.svg" alt="ok" />
+				{/if}
+			</div>
+		</SoftwareKeys>
+	</main>
+{/if}
 <svelte:window on:keydown={handleKeyDown} />
