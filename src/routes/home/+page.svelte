@@ -25,6 +25,7 @@
 		recent: string;
 		contacts: string;
 		messagesFetchError: string;
+		inviteMessage: string;
 	}
 
 	let recentConversations: Message[] = [];
@@ -91,8 +92,20 @@
 		if (element) {
 			const phone = element.getAttribute('data-phone');
 			const count = element.getAttribute('data-count');
-			if (count && Number(count) > 0) {
+			const invite = element.getAttribute('data-invite');
+			if (count && Number(count) > 0 && invite !== 'true') {
 				goto(`/messages/${phone}`);
+			} else if (invite === 'true') {
+				// Open sms app to invite user
+				const element = document.createElement('a');
+				element.setAttribute(
+					'href',
+					`sms:${phone}?body=${encodeURI(
+						translations?.inviteMessage ??
+							`Hey, I'm using Uttrr. It's a great app to send messages to your friends and family. You can download it from https://uttrr.com`
+					)}`
+				);
+				element.click();
 			} else {
 				goto(`/messages/${phone}/new`);
 			}
@@ -158,6 +171,7 @@
 					phone="9899272513"
 					datetime="2021-01-01 12:00 AM"
 					count={0}
+					invite={true}
 				/>
 			</li>
 			<li>
