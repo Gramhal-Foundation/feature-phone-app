@@ -203,6 +203,9 @@
 			<div slot="center" class="flex justify-center">
 				<img class="h-4 w-4" src="/tick.svg" alt="ok" />
 			</div>
+			<div slot="right" class="flex justify-end">
+				<img class="h-4 w-4" src="/trash.svg" alt="back" />
+			</div>
 		</SoftwareKeys>
 	</main>
 {/if}
