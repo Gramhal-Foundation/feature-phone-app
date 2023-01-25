@@ -31,7 +31,7 @@ axiosInstance.interceptors.response.use(
 			const refreshToken = getRefreshToken();
 			if (refreshToken) {
 				try {
-					const response = await axiosInstance.post(
+					const response = await axios.post(
 						'/refresh',
 						{},
 						{
@@ -41,14 +41,14 @@ axiosInstance.interceptors.response.use(
 						}
 					);
 					setAuthTokens(response.data);
-					axiosInstance.defaults.headers.common[
+					originalRequest.defaults.headers.common[
 						'Authorization'
 					] = `Bearer ${response.data.access_token}`;
 					setAuthTokens({
 						access_token: response.data.access_token,
 						refresh_token: refreshToken
 					});
-					return axiosInstance(originalRequest);
+					return axios(originalRequest);
 				} catch (error) {
 					console.log(error);
 					clearAuthTokens();
